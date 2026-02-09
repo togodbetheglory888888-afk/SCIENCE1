@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SCIENCE 1 - Quarter 4 Week 1</title>
+<style>
+body { font-family: Arial; margin: 0; padding: 0; background: #e6ffe6; }
+.center-screen {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  height: 100vh; text-align: center;
+}
+h1 { font-size: 50px; color: #009933; margin-bottom: 40px; }
+button.play-now {
+  background-color: #009933; color: white; font-size: 28px; padding: 20px 60px;
+  border: none; border-radius: 10px; cursor: pointer;
+}
+button { margin: 5px 5px 15px 0; padding: 12px 25px; font-size: 20px; cursor: pointer; }
+.week-content { padding: 20px; max-width: 900px; margin: auto; }
+h2 { color: #009933; font-size: 28px; margin-top: 40px; }
+h3 { font-size: 24px; }
+p.story { text-align: justify; font-size: 20px; line-height: 1.6; background-color: #ccffcc; padding: 15px; border-radius: 8px; }
+.feedback { font-weight: bold; margin-bottom: 20px; font-size: 20px; }
+.score { font-weight: bold; font-size: 22px; margin: 20px 0; }
+.week { display: none; }
+.timer { font-weight: bold; font-size: 22px; color: red; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="center-screen">
+  <h1>SCIENCE 1 - Quarter 4 Week 1</h1>
+  <button class="play-now" onclick="startGame()">Play Now</button>
+</div>
+
+<div id="gameContent" class="week-content" style="display:none;">
+  <div class="timer" id="timer">Time Remaining: 05:00</div>
+
+  <!-- SCIENCE Week 1 -->
+  <div class="week" id="week1">
+    <h2>SCIENCE 1: Living Things</h2>
+    <p class="story">
+      Living things have life. Man, animals, and plants are living things. Living things can grow. They need food, air, and water to grow. 
+      Living things can also reproduce other organisms of their own kind. Some living things can move like man and animals.
+    </p>
+
+    <h3>1. What do living things need to grow?</h3>
+    <button onclick="checkAnswer(1,'A')">A. Light and soil</button>
+    <button onclick="checkAnswer(1,'B')">B. Toys and games</button>
+    <button onclick="checkAnswer(1,'C')">C. Music and dance</button>
+    <button onclick="checkAnswer(1,'D')">D. Food, air, and water</button>
+    <p class="feedback" id="feedback1"></p>
+
+    <h3>2. Which of these is NOT a living thing?</h3>
+    <button onclick="checkAnswer(2,'A')">A. A dog</button>
+    <button onclick="checkAnswer(2,'B')">B. A tree</button>
+    <button onclick="checkAnswer(2,'C')">C. A chair</button>
+    <button onclick="checkAnswer(2,'D')">D. A flower</button>
+    <p class="feedback" id="feedback2"></p>
+
+    <h3>3. What can living things do that non-living things cannot?</h3>
+    <button onclick="checkAnswer(3,'A')">A. Make sounds</button>
+    <button onclick="checkAnswer(3,'B')">B. Change color</button>
+    <button onclick="checkAnswer(3,'C')">C. Grow and reproduce</button>
+    <button onclick="checkAnswer(3,'D')">D. Stay in one place forever</button>
+    <p class="feedback" id="feedback3"></p>
+
+    <h3>4. Which living things can move on their own?</h3>
+    <button onclick="checkAnswer(4,'A')">A. Plants and trees</button>
+    <button onclick="checkAnswer(4,'B')">B. Man and animals</button>
+    <button onclick="checkAnswer(4,'C')">C. Water and clouds</button>
+    <button onclick="checkAnswer(4,'D')">D. Rocks and mountains</button>
+    <p class="feedback" id="feedback4"></p>
+
+    <h3>5. What does it mean for living things to reproduce?</h3>
+    <button onclick="checkAnswer(5,'A')">A. To eat food</button>
+    <button onclick="checkAnswer(5,'B')">B. To grow bigger</button>
+    <button onclick="checkAnswer(5,'C')">C. To move to a new place</button>
+    <button onclick="checkAnswer(5,'D')">D. To make new living things of their own kind</button>
+    <p class="feedback" id="feedback5"></p>
+
+    <div class="score" id="score1" style="display:none;"></div>
+    <button onclick="calculateScore(1)">See Score</button>
+    <button onclick="resetWeek(1)">Try Again</button>
+  </div>
+</div>
+
+<script>
+let timerInterval;
+let timeRemaining = 300; // 5 minutes
+
+function startGame(){
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('gameContent').style.display='block';
+  showWeek(1);
+  startTimer();
+}
+
+function showWeek(week){
+  const weeks = document.querySelectorAll('.week');
+  weeks.forEach(w=>w.style.display='none');
+  document.getElementById('week'+week).style.display='block';
+}
+
+// SCIENCE Week 1 answers
+const answers = {1:'D',2:'C',3:'C',4:'B',5:'D'};
+
+function checkAnswer(qNum, choice){
+  const fb=document.getElementById('feedback'+qNum);
+  const utterance = new SpeechSynthesisUtterance();
+  if(choice===answers[qNum]){
+    fb.textContent='✅ Correct!';
+    fb.style.color='green';
+    utterance.text = "Correct";
+  } else {
+    fb.textContent='❌ Please try again!';
+    fb.style.color='red';
+    utterance.text = "Please try again";
+  }
+  speechSynthesis.speak(utterance);
+}
+
+function calculateScore(week){
+  let score=0;
+  for(let i=1;i<=5;i++){
+    const fb=document.getElementById('feedback'+i).textContent;
+    if(fb.includes('Correct')) score++;
+  }
+  document.getElementById('score'+week).textContent=`You scored ${score}/5 correct answers!`;
+  document.getElementById('score'+week).style.display='block';
+}
+
+function resetWeek(week){
+  for(let i=1;i<=5;i++){
+    document.getElementById('feedback'+i).textContent='';
+  }
+  document.getElementById('score'+week).style.display='none';
+  timeRemaining = 300;
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  const timerDisplay = document.getElementById('timer');
+  timerInterval = setInterval(()=>{
+    let min = Math.floor(timeRemaining/60);
+    let sec = timeRemaining%60;
+    timerDisplay.textContent = `Time Remaining: ${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+    if(timeRemaining<=0){
+      clearInterval(timerInterval);
+      alert("Time is up!");
+    }
+    timeRemaining--;
+  },1000);
+}
+</script>
+
+</body>
+</html>
